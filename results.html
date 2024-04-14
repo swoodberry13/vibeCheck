@@ -8,6 +8,8 @@
 <body>
     <h1>Artists Array</h1>
      <div id='allArtists'></div>
+     <h2>similar artists</h2>
+     <div id='similar'></div>
     <h1>User's Top Artists</h1>
     <h3>Long term</h3>
     <div id='long'>
@@ -70,12 +72,30 @@
             if(allArtistsID.indexOf(arr2[i])==-1){//checks if ID is there or not
               allMyArtists.push(arr1[i]);
               allArtistsID.push(arr2[i]);
+              getSimilar(arr2[i]);
             }
           }
           document.getElementById('allArtists').innerHTML=allMyArtists;
         }
-        function getFollowArtists(){
-          url='https://api.spotify.com/v1/me/following?type=artist&limit=50';
+
+        similarArtists=[];
+        similarArtistsID=[];
+        function addToSimilarArtists(arr1, arr2){
+          len=arr2.length;
+          for(let i = 0;i<len;i++){
+            //checks if ID is already in either the similar or the all artists list
+            if((similarArtistsID.indexOf(arr2[i])==-1)&&(allArtistsID.indexOf(arr2[i])==-1)){
+              similarArtists.push(arr1[i]);
+              similarArtistsID.push(arr2[i]);
+            }
+          }
+          document.getElementById('similar').innerHTML=similarArtists;
+        }
+
+        //adds similar artists to list
+        //originalID is the spotify ID of the original artist
+        function getSimilar(originalID){
+          url='https://api.spotify.com/v1/artists/'+originalID+'/related-artists';
           myRequest= fetch(url,{
             method: 'GET',
             headers: {
@@ -83,15 +103,19 @@
               }
               }).then(response => response.json())
               .then(data => {
-                followArtists=[];
-                myFollows=data.items;
-                len=myFollows.length;
-                 for(let i = 0;i<len;i++){
-                  followArtists.push(myFollows[i].name);
-                 }
-                  //addToAllMyArtists(followArtists);
+                simArtists=[];
+                simArtistsIDs=[];
+                myData=data.artists;
+                len= myData.length;
+                max=3;// max of how many similar artists to the current artists will be added
+                for(let i = 0;i<len;i++){
+                  if(i<=max){
+                  simArtists.push(myData[i].name);
+                  simArtistsIDs.push(myData[i].id);
+                  }
+                }
+                addToSimilarArtists(simArtists, simArtistsIDs);    
               });
-
         }
 
         //term is either short_term, medium_term, or long_term
@@ -162,7 +186,9 @@
 
 
            console.log("HERE ARE ALL MY ARTISTS")
-           console.log(allMyArtists);
+           console.log(similarArtists)
+           
+           //getSimilar("3g2kUQ6tHLLbmkV7T4GPtL");
            
 
 
