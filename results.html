@@ -21,6 +21,7 @@
     <div id='short'>
     </div>
     <script>
+      
         // Function to get authorization code from url
         function getCodeFromUrl() {
             var urlParams = new URLSearchParams(window.location.search);
@@ -66,17 +67,41 @@
 
         //takes in an array of artists and adds them to allMyArtists if they're not already there
         //arr1 is name arr2 is id
-        function addToAllMyArtists(arr1, arr2){
+        function addToAllMyArtists(arr1, arr2){//OLD
           len=arr2.length;
           for(let i = 0;i<len;i++){
             if(allArtistsID.indexOf(arr2[i])==-1){//checks if ID is there or not
               allMyArtists.push(arr1[i]);
               allArtistsID.push(arr2[i]);
-              getSimilar(arr2[i]);
+              getSimilar(arr2[i]);//adds similar artists to current artist to similarArtists array
             }
           }
           document.getElementById('allArtists').innerHTML=allMyArtists;
         }
+        // function addToMyArtists(arr1, arr2){
+        //   len=arr2.length;
+          
+        //   for(let i = 0;i<len;i++){
+        //     if(allArtistsID.indexOf(arr2[i])==-1){
+        //       url='https://api.spotify.com/v1/artists/'+arr2[i]+'/albums';
+        //       myRequest= fetch(url,{
+        //     method: 'GET',
+        //     headers: {
+        //       'Authorization' : authCode
+        //       }
+        //       }).then(response => response.json())
+        //       .then(data => {
+        //         simArtists=[];
+        //         simArtistsIDs=[];
+        //         console.log(data)
+        //         console.log('most recent')
+        //         myData=data.items[0].release_date;
+        //         console.log(myData)
+                
+        //       });
+        //     }
+        //   }
+        // }
 
         similarArtists=[];
         similarArtistsID=[];
@@ -107,7 +132,7 @@
                 simArtistsIDs=[];
                 myData=data.artists;
                 len= myData.length;
-                max=3;// max of how many similar artists to the current artists will be added
+                max=5;// max of how many similar artists to the current artists will be added
                 for(let i = 0;i<len;i++){
                   if(i<=max){
                   simArtists.push(myData[i].name);
@@ -172,8 +197,25 @@
                  addToAllMyArtists(topTrackArtistArr,topTrackArtistID);
               });
              }catch (e) { console.log (e) }
-
           }
+          // function logArtists(allArtist, allArtistIDs){
+          //   var obj = {
+          //     top: [],
+          //     suggest:[]
+          //     };
+          //   len= allArtist.length;
+          //   for(let q=0;q<len;q++){
+          //     obj.table.push({name: allArtist[q], id:allArtistIDs[q]});
+          //   }
+          //   const data = JSON.stringify(obj);
+          //   fs.writeFile("data.json", data, (error) => {  
+          //     if (error) {// logging the error
+          //     console.error(error);
+          //     throw error;
+          //     }
+          //     console.log("data.json written correctly");
+          //     });
+          // }
 
           //adding artists from top artists
           getTopArtists('long_term');
@@ -186,10 +228,25 @@
 
 
            console.log("HERE ARE ALL MY ARTISTS")
-           console.log(similarArtists)
-           
-           //getSimilar("3g2kUQ6tHLLbmkV7T4GPtL");
-           
+           console.log(similarArtistsID)
+
+           //call to test looking at artists
+          // urlTEST='https://api.spotify.com/v1/artists/6olE6TJLqED3rqDCT0FyPh/albums';
+          // myRequest= fetch(urlTEST,{
+          //   method: 'GET',
+          //   headers: {
+          //     'Authorization' : authCode
+          //     }
+          //     }).then(response => response.json())
+          //     .then(data => {
+          //       simArtists=[];
+          //       simArtistsIDs=[];
+          //       console.log(data)
+          //       console.log('most recent')
+          //       myData=data.items[0].release_date;
+          //       console.log(myData)
+                
+          //     });
 
 
           //lists top Artists on the page
