@@ -6,6 +6,10 @@
     <title>User's Top Artists</title>
 </head>
 <body>
+    <h1>Artists Array</h1>
+     <div id='allArtists'></div>
+     <h2>similar artists</h2>
+     <div id='similar'></div>
     <h1>User's Top Artists</h1>
     <h3>Long term</h3>
     <div id='long'>
@@ -20,41 +24,20 @@
         // Function to get authorization code from url
         function getCodeFromUrl() {
             var urlParams = new URLSearchParams(window.location.search);
-            console.log(window.location.hash);
+            // console.log(window.location.hash);
             var hash =window.location.hash;
             hash=hash.substring(14, hash.indexOf('&'));
-            console.log(hash);
+            // console.log(hash);
             
 
             return hash;
         }
         authCode=getCodeFromUrl();
         authCode= 'Bearer '+authCode;
+        let allMyArtists=[];
+        let allArtistsID=[];
 
-        //term is either short_term, medium_term, or long_term
-        //limit goes from 0-50
-        //myElem is the html element that has the list
-        function getTopArtists(term, limit, myElem){
-          artists=[];
-          url='https://api.spotify.com/v1/me/top/artists?time_range='+term+'&limit='+limit;
-          myRequest= fetch(url,{
-            method: 'GET',
-            headers: {
-              'Authorization' : authCode
-              }
-              }).then(response => response.json())
-              .then(data => {
-                topArtistsData=data.items;
-                len=topArtistsData.length;
-                 for(let i = 0;i<len;i++){
-                   artists.push(topArtistsData[i].name);
-                   }
-                   console.log(artists);
-                   });
-                   console.log(artists);
-                   return artists;
-                   
-          }
+
         //term is either short_term, medium_term, or long_term
         //limit goes from 0-50
         //myElem is the html element that has the list
@@ -81,103 +64,139 @@
                    });
           }
 
+        //takes in an array of artists and adds them to allMyArtists if they're not already there
+        //arr1 is name arr2 is id
+        function addToAllMyArtists(arr1, arr2){
+          len=arr2.length;
+          for(let i = 0;i<len;i++){
+            if(allArtistsID.indexOf(arr2[i])==-1){//checks if ID is there or not
+              allMyArtists.push(arr1[i]);
+              allArtistsID.push(arr2[i]);
+              getSimilar(arr2[i]);
+            }
+          }
+          document.getElementById('allArtists').innerHTML=allMyArtists;
+        }
+
+        similarArtists=[];
+        similarArtistsID=[];
+        function addToSimilarArtists(arr1, arr2){
+          len=arr2.length;
+          for(let i = 0;i<len;i++){
+            //checks if ID is already in either the similar or the all artists list
+            if((similarArtistsID.indexOf(arr2[i])==-1)&&(allArtistsID.indexOf(arr2[i])==-1)){
+              similarArtists.push(arr1[i]);
+              similarArtistsID.push(arr2[i]);
+            }
+          }
+          document.getElementById('similar').innerHTML=similarArtists;
+        }
+
+        //adds similar artists to list
+        //originalID is the spotify ID of the original artist
+        function getSimilar(originalID){
+          url='https://api.spotify.com/v1/artists/'+originalID+'/related-artists';
+          myRequest= fetch(url,{
+            method: 'GET',
+            headers: {
+              'Authorization' : authCode
+              }
+              }).then(response => response.json())
+              .then(data => {
+                simArtists=[];
+                simArtistsIDs=[];
+                myData=data.artists;
+                len= myData.length;
+                max=3;// max of how many similar artists to the current artists will be added
+                for(let i = 0;i<len;i++){
+                  if(i<=max){
+                  simArtists.push(myData[i].name);
+                  simArtistsIDs.push(myData[i].id);
+                  }
+                }
+                addToSimilarArtists(simArtists, simArtistsIDs);    
+              });
+        }
+
+        //term is either short_term, medium_term, or long_term
+        //limit goes from 0-50
+        function getTopArtists(term){
+          //artists=[];
+          url='https://api.spotify.com/v1/me/top/artists?time_range='+term+'&limit=50';
+          myRequest= fetch(url,{
+            method: 'GET',
+            headers: {
+              'Authorization' : authCode
+              }
+              }).then(response => response.json())
+              .then(data => {
+                topArtists=[];
+                topArtistIDs=[];
+                topArtistsData=data.items;
+                len=topArtistsData.length;
+                 for(let i = 0;i<len;i++){
+                   topArtists.push(topArtistsData[i].name);
+                   topArtistIDs.push(topArtistsData[i].id);
+                 }
+                 addToAllMyArtists(topArtists,topArtistIDs);
+                   });     
+          }
+
+          //gets top track artists and adds them to allMyArtists if they're not already there
+          //term is either short_term, medium_term, or long_term
+           //limit goes from 0-50
+           function getTopTrackArtists(term){
+            artists=[];
+            url='https://api.spotify.com/v1/me/top/tracks?time_range='+term+'&limit=50';
+            try{
+          response=fetch(url,{
+            method: 'GET',
+            headers: {
+              'Authorization' : authCode
+              }}).then(response => response.json())
+              .then(data => {
+                topTrackArtistArr=[];
+                topTrackArtistID=[];
+                mySongsData=data.items;
+                len1= mySongsData.length;
+
+                 for(let i = 0;i<len1;i++){
+                   songArtists=mySongsData[i].artists;
+                  len2= songArtists.length;
+
+                   for(let q=0;q<len2;q++){
+                      topTrackArtistArr.push(songArtists[q].name);
+                      topTrackArtistID.push(songArtists[q].id);
+                   }
+                 }
+                 addToAllMyArtists(topTrackArtistArr,topTrackArtistID);
+              });
+             }catch (e) { console.log (e) }
+
+          }
+
+          //adding artists from top artists
+          getTopArtists('long_term');
+          getTopArtists('medium_term');
+          getTopArtists('short_term');
+          //adding artists from top tracks
+           getTopTrackArtists('long_term');
+           getTopTrackArtists('medium_term');
+           getTopTrackArtists('short_term');
+
+
+           console.log("HERE ARE ALL MY ARTISTS")
+           console.log(similarArtists)
+           
+           //getSimilar("3g2kUQ6tHLLbmkV7T4GPtL");
+           
+
+
+          //lists top Artists on the page
           listTopArtists('long_term',50,'long');
           listTopArtists('medium_term',50,'med');
           listTopArtists('short_term',50,'short');
-           t= getTopArtists('long_term',50,'long');
-           console.log(t);
 
-          //  document.getElementById("med").innerHTML =getTopArtists('medium_term',50);
-          //  document.getElementById("short").innerHTML =getTopArtists('short_term',50);
-
-  //       myString='<ol>';
-
-  //       myRequest= fetch('https://api.spotify.com/v1/me/top/artists',{
-  //         method: 'GET',
-  //         headers: {
-  //           'Authorization' : authCode
-  //         }
-  //       }).then(response => response.json())
-	// .then(data => {
-  //   console.log(data);
-  //   console.log(data.items);
-  //   topArtistsData=data.items;
-  //   len=topArtistsData.length;
-  //   for(let i = 0;i<len;i++){
-  //     myString=myString+'<li>'+topArtistsData[i].name+'</li>';
-  //   }
-  //   myString=myString+'</ol>';
-  //   document.getElementById("test").innerHTML =myString;
-  //   console.log(data.items[0]);
-  // });
-  // console.log(myString);
-        // window.onload = async function(){
-
-        // } 
-        
-        
-       
-
-
-        // Once the page loads, extract the code from URL and fetch user's top artists
-        // window.onload = async function() {
-        //     var code = getCodeFromUrl();
-        //     if (code) {
-        //         try {
-        //             // Exchange code for access token
-        //             var response = await fetch('exchange_code.py', {
-        //                 method: 'POST',
-        //                 headers: {
-        //                     'Content-Type': 'application/json'
-        //                 },
-        //                 body: JSON.stringify({ 'code': code })
-        //             });
-        //             var data = await response.json();
-        //             console.log(JSON.parse(data));
-        //             var accessToken = data.access_token;
-        //             var token = accessToken;
-
-        //             // Fetch user's top artists using the access token
-        //             var topArtistsResponse = await fetch('https://api.spotify.com/v1/me/top/artists', {
-        //                 headers: {
-        //                     'Authorization': 'Bearer ' + accessToken
-        //                 }
-        //             });
-        //             var topArtistsData = await topArtistsResponse.json();
-
-        //             // Display user's top artists on the page
-        //         //     var topArtistsList = document.getElementById('topArtistsList');
-        //         //     topArtistsData.items.forEach(function(artist) {
-        //         //         var listItem = document.createElement('li');
-        //         //         listItem.textContent = artist.name;
-        //         //         topArtistsList.appendChild(listItem);
-        //         //     });
-        //         async function fetchWebApi(endpoint, method, body) {
-        //           const res = await fetch(`https://api.spotify.com/${endpoint}`, {
-        //             headers: {
-        //               Authorization: `Bearer ${token}`,
-        //               },
-        //               method,
-        //               body:JSON.stringify(body)
-        //               });
-        //               return await res.json();
-        //               }
-        //         async function getTopTracks(){
-        //           // Endpoint reference : https://developer.spotify.com/documentation/web-api/reference/get-users-top-artists-and-tracks
-        //           return (await fetchWebApi('v1/me/top/tracks?time_range=long_term&limit=5', 'GET')).items;
-        //           }
-        //         // const topTracks = await getTopTracks();
-        //         // console.log(
-        //         //   topTracks?.map(
-        //         //     ({name, artists}) =>
-        //         //     `${name} by ${artists.map(artist => artist.name).join(', ')}`
-        //         //     )
-        //         //   )
-        //         } catch (error) {
-        //             console.log('Error fetching top artists:', error);
-        //         }
-        //     }
-        // };
     </script>
 </body>
 </html>
