@@ -86,9 +86,7 @@
                 if (data.page.totalElements > 0) {
                     // Get attractionId
                     id = data._embedded.attractions[0].id;
-                    console.log(id)
-
-                    eventSearchURL = `https://app.ticketmaster.com/discovery/v2/events.json?attractionId=${id}&apikey=1IiUV6YIvdbcA2xr6D9bBGrKOIao6VGb&size=10`;
+                    eventSearchURL = `https://app.ticketmaster.com/discovery/v2/events.json?attractionId=${id}&apikey=1IiUV6YIvdbcA2xr6D9bBGrKOIao6VGb&size=1`;
                     // Do event search
                     const response = eventSearch(eventSearchURL); 
                     
@@ -106,17 +104,26 @@
             .then (eventData => 
                 {
                     eventData = JSON.parse(eventData);
-                    console.log(eventData._embedded.events[0].name); 
+                    eventsName = eventData._embedded.events[0].name; 
+                    artistName = eventData._embedded.events[0]._embedded.attractions[0].name;          
+                    venue = eventData._embedded.events[0]._embedded.venues[0].name; 
+                    date = eventData._embedded.events[0].dates.start.localDate; 
+                    localTime = eventData._embedded.events[0].dates.start.localTime; 
+                    city = eventData._embedded.events[0]._embedded.venues[0].city.name; 
+                    state = eventData._embedded.events[0]._embedded.venues[0].state.name; 
+                    country = eventData._embedded.events[0]._embedded.venues[0].country.name;  
+                    url = eventData._embedded.events[0].url; 
+     
                 })
             .catch (error => console.log(error))
         }
 
         async function fetchData() {
-            const artists = ["Pink Pantheress", "asdfkjh", "Psychedelic Porn Crumpets", "Adele", "Maggie Rogers", "Death Cab for Cutie"];
+            const artists = ["Pink Pantheress", "Psychedelic Porn Crumpets", "Adele", "Maggie Rogers", "Death Cab for Cutie"];
             // const artists = ["Pink Pantheress", "asdfkjh", "Psychedelic Porn Crumpets", "Adele"];
             // const artists = ["adele", "asdkfj"];
             for (const artist of artists) {
-                console.log("artist: " + artist)
+                // console.log("artist: " + artist)
                 attractionSearchURL = `https://app.ticketmaster.com/discovery/v2/attractions.json?keyword=${artist}&apikey=1IiUV6YIvdbcA2xr6D9bBGrKOIao6VGb&size=1`
                 // Do attraction search to get attractionId
                 attractionSearch(attractionSearchURL);
