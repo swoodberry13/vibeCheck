@@ -36,7 +36,7 @@
         authCode=getCodeFromUrl();
         authCode= 'Bearer '+authCode;
         let allMyArtists=[];
-        let allArtistsID=[];
+        let allMyArtistsID=[];
 
 
         //term is either short_term, medium_term, or long_term
@@ -51,8 +51,6 @@
               }
               }).then(response => response.json())
               .then(data => {
-                // console.log(data);
-                // console.log(data.items);
                 myString='<ol>';
                 topArtistsData=data.items;
                 len=topArtistsData.length;
@@ -67,53 +65,106 @@
 
         //takes in an array of artists and adds them to allMyArtists if they're not already there
         //arr1 is name arr2 is id
-        function addToAllMyArtists(arr1, arr2){//OLD
+        function addToAllMyArtists(arr1, arr2){
           len=arr2.length;
           for(let i = 0;i<len;i++){
-            if(allArtistsID.indexOf(arr2[i])==-1){//checks if ID is there or not
+            if(allMyArtistsID.indexOf(arr2[i])==-1){//checks if ID is there or not
               allMyArtists.push(arr1[i]);
-              allArtistsID.push(arr2[i]);
+              allMyArtistsID.push(arr2[i]);
               getSimilar(arr2[i]);//adds similar artists to current artist to similarArtists array
             }
           }
           document.getElementById('allArtists').innerHTML=allMyArtists;
         }
-        // function addToMyArtists(arr1, arr2){
-        //   len=arr2.length;
-          
-        //   for(let i = 0;i<len;i++){
-        //     if(allArtistsID.indexOf(arr2[i])==-1){
-        //       url='https://api.spotify.com/v1/artists/'+arr2[i]+'/albums';
-        //       myRequest= fetch(url,{
-        //     method: 'GET',
-        //     headers: {
-        //       'Authorization' : authCode
-        //       }
-        //       }).then(response => response.json())
-        //       .then(data => {
-        //         simArtists=[];
-        //         simArtistsIDs=[];
-        //         console.log(data)
-        //         console.log('most recent')
-        //         myData=data.items[0].release_date;
-        //         console.log(myData)
-                
-        //       });
-        //     }
-        //   }
-        // }
+        function addToMyArtists(arr1, arr2){
+          len=arr2.length;
+          const date = new Date();
+          let month =parseInt( date.getMonth() + 1);
+          let year = parseInt(date.getFullYear());
+          year=year-12;
+          for(let i = 0;i<len;i++){
+            if((allMyArtists.indexOf(arr1[i])==-1) && (allMyArtistsID.indexOf(arr2[i])==-1)){
+              url='https://api.spotify.com/v1/artists/'+arr2[i]+'/albums';
+              myRequest= fetch(url,{
+            method: 'GET',
+            headers: {
+              'Authorization' : authCode
+              }
+              }).then(response => response.json())
+              .then(data => {
+                myDate=data.items[0].release_date;
+                myDate= myDate.slice(0,4);
+                myYear= parseInt(myDate);
+
+                //if they've released music in the last 12 years add them to allMyArtists
+                if(myYear>=year){
+                   allMyArtists.push(arr1[i]);
+                   allMyArtistsID.push(arr2[i]);
+                }
+                getSimilar(arr2[i]);
+                 
+              });
+            }
+          }
+           document.getElementById('allArtists').innerHTML=allMyArtists;
+        }
 
         similarArtists=[];
         similarArtistsID=[];
+        // function addToSimilarArtists(arr1, arr2){
+        //   len=arr2.length;
+        //   for(let i = 0;i<len;i++){
+        //     //checks if ID is already in either the similar or the all artists list
+        //     if((similarArtistsID.indexOf(arr2[i])==-1)&&(allMyArtistsID.indexOf(arr2[i])==-1)){
+        //       similarArtists.push(arr1[i]);
+        //       similarArtistsID.push(arr2[i]);
+        //     }
+        //   }
+        //   document.getElementById('similar').innerHTML=similarArtists;
+        // }
+        function removeDuplicates(arr) {
+        return arr.filter((item,
+        index) => arr.indexOf(item) === index);
+}
         function addToSimilarArtists(arr1, arr2){
           len=arr2.length;
+          const date = new Date();
+          let month =parseInt( date.getMonth() + 1);
+          let year = parseInt(date.getFullYear());
+          year=year-12;
+
           for(let i = 0;i<len;i++){
             //checks if ID is already in either the similar or the all artists list
-            if((similarArtistsID.indexOf(arr2[i])==-1)&&(allArtistsID.indexOf(arr2[i])==-1)){
-              similarArtists.push(arr1[i]);
-              similarArtistsID.push(arr2[i]);
+            if((similarArtistsID.indexOf(arr1[i])==-1)&&(allMyArtistsID.indexOf(arr1[i])==-1)){
+               url='https://api.spotify.com/v1/artists/'+arr2[i]+'/albums';
+              myRequest= fetch(url,{
+            method: 'GET',
+            headers: {
+              'Authorization' : authCode
+              }
+              }).then(response => response.json())
+              .then(data => {
+                myDate=data.items[0].release_date;
+                myDate= myDate.slice(0,4);
+                myYear= parseInt(myDate);
+
+                //if they've released music in the last 12 years add them to similarArtists
+                if(myYear>=year){
+                  similarArtists.push(arr1[i]);
+                  similarArtistsID.push(arr2[i]);
+                }
+                // else{
+                //   console.log("------ too old for similar --------");
+                //   console.log(arr1[i]);
+                //   console.log("-----------------------------------");
+                //  }
+              });
             }
-          }
+            console.log('------ Duplicate ------');
+            console.log(arr1[i]);
+            console.log('------------------------');
+            }
+          
           document.getElementById('similar').innerHTML=similarArtists;
         }
 
@@ -163,7 +214,7 @@
                    topArtists.push(topArtistsData[i].name);
                    topArtistIDs.push(topArtistsData[i].id);
                  }
-                 addToAllMyArtists(topArtists,topArtistIDs);
+                 addToMyArtists(topArtists,topArtistIDs);
                    });     
           }
 
@@ -194,7 +245,7 @@
                       topTrackArtistID.push(songArtists[q].id);
                    }
                  }
-                 addToAllMyArtists(topTrackArtistArr,topTrackArtistID);
+                 addToMyArtists(topTrackArtistArr,topTrackArtistID);
               });
              }catch (e) { console.log (e) }
           }
@@ -239,12 +290,16 @@
           //     }
           //     }).then(response => response.json())
           //     .then(data => {
-          //       simArtists=[];
-          //       simArtistsIDs=[];
-          //       console.log(data)
-          //       console.log('most recent')
-          //       myData=data.items[0].release_date;
-          //       console.log(myData)
+          //       myDate=data.items[0].release_date;
+          //       myDate= myDate.slice(0,5);
+          //       myYear= parseInt(myDate);
+          //       console.log(data.items[0])
+          //       console.log(myYear);
+          //       // if(myYear>=year){
+          //       //    allMyArtists.push(arr1[i]);
+          //       //    allMyArtistsID.push(arr2[i]);
+          //       // }
+          //       // getSimilar(arr2[i]);
                 
           //     });
 
