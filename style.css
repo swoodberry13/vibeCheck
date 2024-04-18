@@ -54,3 +54,37 @@ body {
       float: none;
     }
   }
+
+  button{
+    border-radius: 30px; 
+    padding: 15px; 
+    font-family: Verdana, Geneva, Tahoma, sans-serif;
+    font-size: 20px;
+    text-align: center;
+    background-color: #F54375;
+    color: #c9e5dd;
+    border-width: 5px;
+  }
+  button:hover{ 
+    background-color: #F2C1D9; 
+    color: #092119; 
+  }
+
+  p {
+    text-align: center;
+    font-family: Verdana, Geneva, Tahoma, sans-serif;
+    color:#092119; 
+    font-size: 25px;
+    font-style: italic;
+  }
+
+ 
+ /* .footer {
+  position: fixed;
+  left: 0;
+  bottom: 0;
+  width: 100%;
+  background-color: #F54375;
+  color: white;
+  text-align: center;
+} */
