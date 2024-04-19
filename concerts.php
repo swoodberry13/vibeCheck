@@ -8,66 +8,6 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Bungee&family=Inter:wght@100..900&family=Lexend:wght@100..900&display=swap" rel="stylesheet">
     <style>
-        body {
-            font-family: sans-serif;
-        }
-        .container {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            padding: 20px;
-            gap: 20px;
-            max-width: 900px;
-            margin-left: auto;
-            margin-right: auto;
-        }
-        #venues-grid {
-            display: grid;
-            grid-template-columns: repeat(1, 1fr);
-            font-family: sans-serif;
-            gap: 2rem;
-            padding: 2%;
-        }
-        @media (min-width: 640px) {
-            #venues-grid {
-                grid-template-columns: repeat(2, 1fr);
-            }      
-        }
-        @media (min-width: 900px) {
-            #venues-grid {
-                grid-template-columns: repeat(3, 1fr);
-            }
-        }
-        @media (min-width: 1100px) {
-            #venues-grid {
-                grid-template-columns: repeat(3, 1fr);
-            }
-        }
-        .venue-card {
-            display: flex;
-            flex-direction: column;
-            background-color: #eeeeee;
-            border: 1px solid #000000;
-            border-radius: 20px;
-            padding: 20px 40px;
-        }
-        h1, h2 {
-            font-weight: bold;
-            font-family: 'Bungee', sans-serif;
-        }
-        a {
-            text-decoration: none;
-            color: #000000;
-        }
-        a:hover {
-            color: #2159ff
-        }
-        .venue-img {
-            height: 100px;
-            background-size: cover;
-            border-radius: 15px;
-        }
     </style>
 </head>
 <body>
@@ -113,7 +53,20 @@
                     state = eventData._embedded.events[0]._embedded.venues[0].state.name; 
                     country = eventData._embedded.events[0]._embedded.venues[0].country.name;  
                     url = eventData._embedded.events[0].url; 
-     
+
+                    // Fill hidden form fields with data
+                    document.forms["event"]["eventName"].value = eventName;
+                    document.forms["event"]["artistName"].value = artistName; 
+                    document.forms["event"]["venue"].value = venue; 
+                    document.forms["event"]["date"].value = date; 
+                    document.forms["event"]["localTime"].value = localTime; 
+                    document.forms["event"]["city"].value = city; 
+                    document.forms["event"]["state"].value = state; 
+                    document.forms["event"]["country"].value = country; 
+                    document.forms["event"]["url"].value = url; 
+
+                    // Auto submit form to pass data to PHP
+                    document.forms["event"].submit();
                 })
             .catch (error => console.log(error))
         }
@@ -137,12 +90,19 @@
         fetchData();
         
     </script>
-    <div class="container">
-        <h1>Artists</h1>
-        <div id="artists-grid"></div>
-        <h2>ℹ️ Information</h2>
-        <p>This site uses the Ticketmaster API, which gives access to information hosted on ticketmaster.com, such as information about events and venues. This API can be found at <a href="https://developer.ticketmaster.com/">developer.ticketmaster.com</a>. In order to successfully make a GET request, you need to provide in the query string the API key and the number of items you would like to retrieve. In this case, that number was how many venues I wanted to receive information for. This API could be used on a musician's website to display upcoming events. This API could also be used on a travel website to display local venues.</p>
-    </div>
-    
+    <?php
+        echo "<form id='eventForm' name='event' method='get' action='process_event.php'>";
+        echo "<input type='hidden' name='eventName'>";
+        echo "<input type='hidden' name='artistName'>";
+        echo "<input type='hidden' name='venue'>";
+        echo "<input type='hidden' name='date'>";
+        echo "<input type='hidden' name='localTime'>";
+        echo "<input type='hidden' name='city'>";
+        echo "<input type='hidden' name='state'>";
+        echo "<input type='hidden' name='country'>";
+        echo "<input type='hidden' name='url'>";
+        echo "</form>"
+
+    ?>
 </body>
 </html>
