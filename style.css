@@ -15,7 +15,7 @@ body {
   
   .header a {
     float: left;
-    color: black;
+    color: #092119;
     text-align: center;
     padding: 12px;
     text-decoration: none;
@@ -84,6 +84,11 @@ body {
     position: absolute;
     bottom: 0;
     width: 100%;
+  }
+
+  h1{
+    font-family: Verdana, Geneva, Tahoma, sans-serif;
+    color:#092119;
   }
   
 
