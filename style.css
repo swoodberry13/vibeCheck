@@ -94,6 +94,7 @@ body {
   /*MUSIC NOTE ANIMATION*/
   .musicNotesAnimation {
     display: block;
+    color: color:#092119;
     margin: auto;
     position: relative;
     width: 50%;
