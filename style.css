@@ -78,13 +78,15 @@ body {
     font-style: italic;
   }
 
- 
- /* .footer {
-  position: fixed;
-  left: 0;
-  bottom: 0;
-  width: 100%;
-  background-color: #F54375;
-  color: white;
-  text-align: center;
-} */
+  .footer {
+    background-color: #F54375;
+    padding: 50px;
+    position: absolute;
+    bottom: 0;
+    width: 100%;
+  }
+  
+
+  
+
+
