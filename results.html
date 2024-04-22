@@ -10,6 +10,12 @@
      <div id='allArtists'></div>
      <h2>similar artists</h2>
      <div id='similar'></div>
+     <form name="form" method="post" action="redirect.php">
+       <input type='hidden' name='formArtists'>
+       <input type='hidden' name='formArtistsID'>
+       <input type='hidden' name='formRelatedArtists'>
+       <input type='hidden' name='formRelatedArtistsID'>
+     </form>
     <script>
       
         // Function to get authorization code from url
@@ -105,7 +111,7 @@
               //loop through list of related artists
               curNumRelated=0;
                for(let h=0; h<cur_related_artists.length;h++){
-                 
+
                   //if we haven't hit the max_number of related artists
                  if(curNumRelated<=numRelated){
                  
@@ -130,6 +136,7 @@
         //gets topTracksArtists and TopArtists and displays them on the page
         //uses await to make sure that 
         async function getMyArtists() {
+          myForm= document.forms['form'];
           await getTopArtists();//wait to get top artists
           await getTopTrackArtists();
           let myPromise = new Promise(function(resolve) {
@@ -142,45 +149,24 @@
             myPromise.then((value) => {
               //displays stuff on page
               document.getElementById("allArtists").innerHTML=value[0];
+              myForm.elements["formArtists"].value=value[0];
+              myForm.elements["formArtistsID"].value=value[1];
+
               document.getElementById("similar").innerHTML=value[2];
+              myForm.elements["formRelatedArtists"].value=value[2];
+              myForm.elements["formRelatedArtistsID"].value=value[2];
               });
           }
 
-          //gets
           async function sendMyData(){
             await getMyArtists();
             const jsonObject = JSON.stringify(myArtists);
             sessionStorage.setItem('array', jsonObject);
-
-            var xhr = new XMLHttpRequest();
-            xhr.open('POST', 'redirect.php', true);
-            xhr.setRequestHeader('Content-Type', 'application/json');
-            xhr.onload = function() {
-              if (xhr.status === 200) {
-                console.log('Data sent successfully');
-                //window.location = "https://sloanw.sgedu.site/spotify/redirect.php"; 
-                } else {
-                  console.error('Error sending data');
-                  }
-              };
-              xhr.send(JSON.stringify({arrayData: myArtists}));
+            console.log(myArtists.length);
+            document.forms['form'].submit();
           }
 
           sendMyData();
-          
-          //show both related and my artists
-          // async function showAll(numRelated){
-          //   await getMyArtists();
-          //   let relatedPromise= new Promise(function(resolve) {
-          //     getRelatedArtists(numRelated);
-          //     console.log('GOT RELATED');
-          //     console.log(relatedArtists)
-          //   });
-          //   document.getElementById("similar").innerHTML = await relatedPromise;
-          // }
-
-
-          //showAll(3);
      
     </script>
 </body>
