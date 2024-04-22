@@ -21,9 +21,9 @@
         }
   
         authCode=getCodeFromUrl();
-        authCode= 'Bearer '+authCode;
-        let myArtists=[];
-        let myArtistsIDs=[];
+        authCode= 'Bearer '+authCode; //formatting so it can be used for later calls
+        var myArtists=[];
+        var myArtistsIDs=[];
 
         //gets all of the user's top artists (short-term, medium term, and long-term) and adds them to myArtists and myArtistsIDs
         async function getTopArtists(){
@@ -42,9 +42,9 @@
               for(let q=0; q<myData.length; q++){
                 curName=myData[q].name;
                 curID= myData[q].id;
-                //if the artist isn't already in the list
+                //if the artist isn't already in the list add them to list
                 if(!myArtistsIDs.includes(curID)){
-                  getRelatedArtists(curID, 2);
+                  getRelatedArtists(curID, 3);//gets artists related to current artist
                   myArtists.push(curName);
                   myArtistsIDs.push(curID);
                 }
@@ -52,6 +52,8 @@
           }
           return myArtists;
         }
+
+
         //gets all the artists from the users top tracks and adds them to the myArtists array
         async function getTopTrackArtists(){
           terms=['long_term','medium_term','short_term'];
@@ -74,13 +76,11 @@
                   curID=song_artists[q].id;
                   curName=song_artists[q].name;
                   if(!myArtistsIDs.includes(curID)){
-                    getRelatedArtists(curID, 3);
+                    getRelatedArtists(curID, 2);//gets artists related to current artist
                     myArtists.push(curName);
-                    myArtistsIDs.push(curID);
-                    
+                    myArtistsIDs.push(curID);      
 
                   }
-                  //getRelatedArtists(curID, 2);
                 }
               }
           }
@@ -88,8 +88,8 @@
           return myArtists;
         }
 
-        relatedArtists=[];
-        relatedArtistsIDs=[];
+        var relatedArtists=[];
+        var relatedArtistsIDs=[];
 
         //get artists related to myArtists
         //numRelated= how many related artists per artists in myArtists should be added to relatedArtists
@@ -105,7 +105,7 @@
               //loop through list of related artists
               curNumRelated=0;
                for(let h=0; h<cur_related_artists.length;h++){
-
+                 
                   //if we haven't hit the max_number of related artists
                  if(curNumRelated<=numRelated){
                  
@@ -119,45 +119,39 @@
 
                 }
                 return relatedArtists;
-
           }
+
+
           function getArtistArray(){
             arr=[myArtists,myArtistsIDs,relatedArtists,relatedArtistsIDs];
             return arr;
           }
-        // function newPage(){
-        //   window.location = "https://sloanw.sgedu.site/spotify/redirect.php"; 
-        // }
+
+        //gets topTracksArtists and TopArtists and displays them on the page
+        //uses await to make sure that 
         async function getMyArtists() {
           await getTopArtists();//wait to get top artists
           await getTopTrackArtists();
           let myPromise = new Promise(function(resolve) {
-          t=getArtistArray();
-          resolve(t);
-           console.log("got my Artists");
-           console.log(t)
+            t=getArtistArray();//returns array with myArtists,myArtistsIDs,relatedArtists,relatedArtistsIDs
+            resolve(t);
+            console.log("got my Artists");
+            console.log(t)
            
             });
             myPromise.then((value) => {
+              //displays stuff on page
               document.getElementById("allArtists").innerHTML=value[0];
-              console.log(value[2].length);
               document.getElementById("similar").innerHTML=value[2];
-              console.log("added to them ")
               });
           }
 
+          //gets
           async function sendMyData(){
             await getMyArtists();
-            // setTimeout(() => {  
-            // for(i=0; i<myArtists.length;i++){
-            //   getRelatedArtists(myArtistsIDs[i],3);
-            // } }, 2000);
             const jsonObject = JSON.stringify(myArtists);
             sessionStorage.setItem('array', jsonObject);
-            //document.getElementById('similar').innerHTML=relatedArtists;
 
-
-            
             var xhr = new XMLHttpRequest();
             xhr.open('POST', 'redirect.php', true);
             xhr.setRequestHeader('Content-Type', 'application/json');
@@ -171,6 +165,7 @@
               };
               xhr.send(JSON.stringify({arrayData: myArtists}));
           }
+
           sendMyData();
           
           //show both related and my artists
