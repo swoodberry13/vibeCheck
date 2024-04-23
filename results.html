@@ -231,10 +231,10 @@
         //gets topTracksArtists and TopArtists and displays them on the page
         //uses await to make sure that 
         async function getMyArtists() {
-          document.getElementById("topArtistsMessage").style.display="inline";
+          document.getElementById("topArtistsMessage").style.display="block";
           await getTopArtists();//wait to get top artists
           document.getElementById("topArtistsMessage").style.display="none";
-           document.getElementById("relatedArtistsMessage").style.display="inline";
+           document.getElementById("relatedArtistsMessage").style.display="block";
           await getTopTrackArtists();
           document.getElementById("relatedArtistsMessage").style.display="none";
           loopingLater();
