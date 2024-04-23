@@ -34,16 +34,8 @@
   <button id="loginButton">Login with Spotify</button>
 </center>
 <script type="text/javascript">
-  //here should be code checking if the users account has logged in with spotify
-
-  //right now im just using session storage
-  //try{
     hasSpotified=sessionStorage.getItem('loggedInSpotify');
     console.log(hasSpotified);
-  //}
-  // catch(err){
-  //    hasSpotified= 0;
-  // }
   if (hasSpotified==null) {
     document.getElementById("concerts").style.display="none";
     document.getElementById("results").style.display="none";
