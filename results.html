@@ -207,10 +207,9 @@
             if(sessionStorage.getItem('array')==null){
               await getMyArtists();
               dataArr=getArtistArray();
-              const jsonObject = JSON.stringify(dataArr);
-              sessionStorage.setItem('array', jsonObject);
-              test=JSON.parse(jsonObject);
-              console.log(test);
+              //const jsonObject = JSON.stringify(dataArr);
+              sessionStorage.setItem('array', dataArr);
+              console.log(sessionStorage.getItem('array'))
             }else{
               dataArr=sessionStorage.getItem('array');
               dataArrParsed= JSON.parse(dataArr);
