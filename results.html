@@ -204,12 +204,25 @@
           }
 
           async function sendMyData(){
-            await getMyArtists();
-            const jsonObject = JSON.stringify(myArtists);
-            sessionStorage.setItem('array', jsonObject);
-            console.log(myArtists.length);
+            if(sessionStorage.getItem('array')==null){
+              await getMyArtists();
+              dataArr=getArtistArray();
+              const jsonObject = JSON.stringify(dataArr);
+              sessionStorage.setItem('array', jsonObject);
+              test=JSON.parse(jsonObject);
+              console.log(test);
+            }else{
+              dataArr=sessionStorage.getItem('array');
+              dataArrParsed= JSON.parse(dataArr);
+              console.log(dataArrParsed);
+            }
+            // await getMyArtists();
+            // const jsonObject = JSON.stringify(myArtists);
+            // sessionStorage.setItem('array', jsonObject);
+            // console.log(myArtists.length);
             //document.forms['form'].submit();
           }
+
 
           sendMyData();
      
