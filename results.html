@@ -10,12 +10,6 @@
      <div id='allArtists'></div>
      <h2>similar artists</h2>
      <div id='similar'></div>
-     <form name="form" method="post" action="redirect.php">
-       <input type='hidden' name='formArtists'>
-       <input type='hidden' name='formArtistsID'>
-       <input type='hidden' name='formRelatedArtists'>
-       <input type='hidden' name='formRelatedArtistsID'>
-     </form>
     <script>
       
         // Function to get authorization code from url
@@ -168,7 +162,6 @@
         //gets topTracksArtists and TopArtists and displays them on the page
         //uses await to make sure that 
         async function getMyArtists() {
-          myForm= document.forms['form'];
           await getTopArtists();//wait to get top artists
           await getTopTrackArtists();
           loopingLater();
@@ -183,12 +176,12 @@
             myPromise.then((value) => {
               //displays stuff on page
               document.getElementById("allArtists").innerHTML=value[0];
-              myForm.elements["formArtists"].value=value[0];
-              myForm.elements["formArtistsID"].value=value[1];
+              // myForm.elements["formArtists"].value=value[0];
+              // myForm.elements["formArtistsID"].value=value[1];
 
               document.getElementById("similar").innerHTML=value[2];
-              myForm.elements["formRelatedArtists"].value=value[2];
-              myForm.elements["formRelatedArtistsID"].value=value[3];
+              // myForm.elements["formRelatedArtists"].value=value[2];
+              // myForm.elements["formRelatedArtistsID"].value=value[3];
               });
           }
 
