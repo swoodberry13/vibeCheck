@@ -18,16 +18,28 @@
         <!-- <a class="active" href="#home">Home</a> -->
         <a id='home' href="main.html">Home</a>
         <a id='concerts'  href="concerts.html">Concerts</a>
-        <a id='results'  href="results.html">Results</a>
+        <!-- <a id='results'  href="results.html">Results</a> -->
         <a id='profile'  href="profile.html">Profile</a>
       </div>
   </div>
 
 </div>
-    <h1>Artists Array</h1>
-     <div id='allArtists'></div>
-     <h2>similar artists</h2>
-     <div id='similar'></div>
+    <h1>Loading your spotify data</h1>
+    <div class="musicNotesAnimation">
+  <div class="note-1">
+  &#9835; &#9833;
+</div>
+<div class="note-2">
+  &#9833;
+</div>
+<div class="note-3">
+  &#9839; &#9834;
+</div>
+<div class="note-4">
+  &#9834;
+</div>
+</div>
+
     <script>
       
         // Function to get authorization code from url
@@ -193,11 +205,11 @@
             });
             myPromise.then((value) => {
               //displays stuff on page
-              document.getElementById("allArtists").innerHTML=value[0];
+              //document.getElementById("allArtists").innerHTML=value[0];
               // myForm.elements["formArtists"].value=value[0];
               // myForm.elements["formArtistsID"].value=value[1];
 
-              document.getElementById("similar").innerHTML=value[2];
+              //document.getElementById("similar").innerHTML=value[2];
               // myForm.elements["formRelatedArtists"].value=value[2];
               // myForm.elements["formRelatedArtistsID"].value=value[3];
               });
@@ -212,16 +224,13 @@
               sessionStorage.setItem('userArtistsID', dataArr[1]);
               sessionStorage.setItem('relatedArtists',dataArr[2]);
               sessionStorage.setItem('relatedArtistsID', dataArr[3]);
+              window.location.href='main.html';
             }else{
               dataArr=sessionStorage.getItem('array');
               dataArrParsed= JSON.parse(dataArr);
               console.log(dataArrParsed);
+              window.location.href='main.html';
             }
-            // await getMyArtists();
-            // const jsonObject = JSON.stringify(myArtists);
-            // sessionStorage.setItem('array', jsonObject);
-            // console.log(myArtists.length);
-            //document.forms['form'].submit();
           }
 
 

@@ -26,30 +26,37 @@
   </div>
 
 </div>
+<div id="loginBlurb">
+  <p>Find concerts you love near you!</p>
 
-<p>Find concerts you love near you!</p>
-
-<br><br>
-<center>
-  <button id="loginButton">Login with Spotify</button>
-</center>
+  <br><br>
+  <center>
+    <button id="loginButton">Login with Spotify</button>
+  </center>
+</div>
 <script type="text/javascript">
-    hasSpotified=sessionStorage.getItem('loggedInSpotify');
-    console.log(hasSpotified);
-  if (hasSpotified==null) {
+    userArtists=sessionStorage.getItem('userArtists');
+    console.log(userArtists);
+    //if its not logged into spotify don't show concerts
+    //if it is logged into spotify get rid of login
+  if (userArtists==null) {
     document.getElementById("concerts").style.display="none";
-    document.getElementById("results").style.display="none";
+    document.getElementById("loginBlurb").style.display="inline";
+    //document.getElementById("results").style.display="none";
+  }else{
+    document.getElementById("loginBlurb").style.display="none";
   }
 </script>
 
   <script>
+    //login and spotify authentication script
     var client_id = '87587e4116394731a7ffbfb872d45712';//'daeea42af07e4702905904f246591317';
     var redirect_uri = 'https://swoodberry13.github.io/vibeCheck/results.html';
     var scopes = 'user-top-read playlist-read-private user-read-recently-played';
             document.getElementById('loginButton').addEventListener('click', function() {
             var authUrl = 'https://accounts.spotify.com/authorize?response_type=token&client_id='
              + client_id + '&scope=' + encodeURIComponent(scopes)+'&redirect_uri=' + encodeURIComponent(redirect_uri);
-            sessionStorage.setItem('loggedInSpotify',1);
+            //sessionStorage.setItem('loggedInSpotify',1);
             window.location.href = authUrl;
         });
 
