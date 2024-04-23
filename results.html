@@ -99,10 +99,12 @@
 
         var relatedArtists=[];
         var relatedArtistsIDs=[];
+        var loopLater=false;
 
         //get artists related to myArtists
         //numRelated= how many related artists per artists in myArtists should be added to relatedArtists
         async function getRelatedArtists(id, numRelated){
+          if(!loopLater){
              url='https://api.spotify.com/v1/artists/'+id+'/related-artists';
              const response= await fetch(url,{
                method: 'GET',
@@ -110,6 +112,12 @@
               'Authorization' : authCode
               }}); 
               const data = await response.json();
+              if (!response.ok) {
+                loopLater= true;
+                console.log("ERROR LOOPING LATER")
+                throw new Error(`HTTP error! status: ${response.status}`);
+              }
+              
               cur_related_artists=data.artists;//list of related artists
               //loop through list of related artists
               curNumRelated=0;
@@ -126,7 +134,7 @@
                   }
                  }
 
-                }
+                }}
                 return relatedArtists;
           }
 
@@ -135,6 +143,27 @@
             arr=[myArtists,myArtistsIDs,relatedArtists,relatedArtistsIDs];
             return arr;
           }
+          async function loopingLater(){
+            if(loopLater){
+              for(i=0;i<myArtists;i++){
+                id= myArtistsIDs[i];
+                url='https://api.spotify.com/v1/artists/'+id+'/related-artists';
+                 const response= await fetch(url,{
+               method: 'GET',
+               headers: {
+              'Authorization' : authCode
+              }}); 
+              const data = await response.json();
+              cur_related_artists=data.artists;
+              for(q=0;q<3;q++){
+                relatedArtists.push(cur_related_artists[q].name);
+                relatedArtistsIDs.push(cur_related_artists[q].id);
+              }
+
+
+              }
+            }
+          }
 
         //gets topTracksArtists and TopArtists and displays them on the page
         //uses await to make sure that 
@@ -142,9 +171,11 @@
           myForm= document.forms['form'];
           await getTopArtists();//wait to get top artists
           await getTopTrackArtists();
+          loopingLater();
           let myPromise = new Promise(function(resolve) {
             t=getArtistArray();//returns array with myArtists,myArtistsIDs,relatedArtists,relatedArtistsIDs
             resolve(t);
+            
             console.log("got my Artists");
             console.log(t)
            
