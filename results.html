@@ -22,7 +22,10 @@
         function getCodeFromUrl() {
             var urlParams = new URLSearchParams(window.location.search);
             var hash =window.location.hash;
-            hash=hash.substring(14, hash.indexOf('&'));
+            console.log(hash);
+            start=hash.indexOf('=')+1;
+            hash=hash.substring(start, hash.indexOf('&'));
+            console.log(hash);
             return hash;
         }
   
