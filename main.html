@@ -38,8 +38,10 @@
 <script type="text/javascript">
     userArtists=sessionStorage.getItem('userArtists');
     console.log(userArtists);
-    console.log(typeof userArtists);
+    userArtists=userArtists.split(",");
+    console.log(userArtists);
     test=sessionStorage.getItem('userArtistsPics');
+    test=test.split(",");
     console.log(test);
 
     //if its not logged into spotify don't show concerts
