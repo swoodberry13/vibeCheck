@@ -34,8 +34,9 @@
     <button id="loginButton">Login with Spotify</button>
   </center>
 </div>
+<div id='topArtists'></div>
 <script type="text/javascript">
-    userArtists=sessionStorage.getItem('userArtists');
+    userArtists=sessionStorage.getItem('userArtistsData');
     console.log(userArtists);
 
     //if its not logged into spotify don't show concerts
@@ -50,7 +51,6 @@
     for(i=0;i<notes.length;i++){
       notes[i].style.display="none";
     }
-
 
   }
 </script>
