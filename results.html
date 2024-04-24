@@ -160,11 +160,12 @@
                   curName=song_artists[q].name;
                   if(!myArtistsIDs.includes(curID)){
                     newAdd=[{name : curName},{ID : curID},{genres : myData[q].genres},{images : myData[q].images}];
-
-                    if (myData[q].images.length<1) {
+                    console.log(curName);
+                    curPics=myData[q].images
+                    if (curPics== undefined) {
                     myArtistsPics.push('images/blankArtists.png')
                   }else{myArtistsPics.push(myData[q].images[0].url);}
-                  
+
                     myArtistsData.push(newAdd);
 
                     getRelatedArtists(curID, 2);//gets artists related to current artist
