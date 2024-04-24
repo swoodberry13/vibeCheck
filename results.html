@@ -96,6 +96,7 @@
         sessionStorage.setItem('authCode', authCode);//setting this so it can be used elsewhere in the site
         var myArtists=[];
         var myArtistsIDs=[];
+        var myArtistsPics=[];
 
         var myArtistsData=[];
         var relatedArtistsData=[];
@@ -122,6 +123,7 @@
 
                   newAdd=[{name : curName},{ID : curID},{genres : myData[q].genres},{images : myData[q].images}];
                   myArtistsData.push(newAdd);
+                  myArtistsPics.push(myData[q].images[0]);
 
                   getRelatedArtists(curID, 3);//gets artists related to current artist
                   myArtists.push(curName);
@@ -276,6 +278,7 @@
               //const jsonObject = JSON.stringify(dataArr);
               sessionStorage.setItem('userArtists', dataArr[0]);
               sessionStorage.setItem('userArtistsIDs', dataArr[1])
+              sessionStorage.setItem('userArtistsPics', myArtistsPics);
               sessionStorage.setItem('relatedArtists',dataArr[2]);
               sessionStorage.setItem('relatedArtistsIDs',dataArr[3]);
               sessionStorage.setItem('artistData',myArtistsData);

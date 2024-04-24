@@ -38,8 +38,9 @@
 <script type="text/javascript">
     userArtists=sessionStorage.getItem('userArtists');
     console.log(userArtists);
-    test=sessionStorage.getItem('artistData');
-    console.log(test[0].name);
+    console.log(typeof userArtists);
+    test=sessionStorage.getItem('userArtistsPics');
+    console.log(test);
 
     //if its not logged into spotify don't show concerts
     //if it is logged into spotify get rid of login
