@@ -176,7 +176,6 @@
                 }
               }
           }
-          //document.getElementById('allArtists').innerHTML=myArtists;
           return myArtists;
         }
 
@@ -249,7 +248,7 @@
           }
 
         //gets topTracksArtists and TopArtists and displays them on the page
-        //uses await to make sure that 
+        //uses await to make sure that there isnt overlap with artists
         async function getMyArtists() {
           document.getElementById("topArtistsMessage").style.display="block";
           await getTopArtists();//wait to get top artists
@@ -266,16 +265,7 @@
             console.log(t)
            
             });
-            // myPromise.then((value) => {
-            //   //displays stuff on page
-            //   //document.getElementById("allArtists").innerHTML=value[0];
-            //   // myForm.elements["formArtists"].value=value[0];
-            //   // myForm.elements["formArtistsID"].value=value[1];
 
-            //   //document.getElementById("similar").innerHTML=value[2];
-            //   // myForm.elements["formRelatedArtists"].value=value[2];
-            //   // myForm.elements["formRelatedArtistsID"].value=value[3];
-            //   });
           }
 
           async function sendMyData(){
@@ -294,7 +284,7 @@
               dataArr=sessionStorage.getItem('array');
               dataArrParsed= JSON.parse(dataArr);
               console.log(dataArrParsed);
-              //window.location.href='main.html';
+              window.location.href='main.html';//Redirect to main.html
             }
           }
 
