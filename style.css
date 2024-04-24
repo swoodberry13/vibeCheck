@@ -8,9 +8,9 @@ body {
   }
 
   .artistBlurb{
-    position: absolute;
-    width: 1050px;
+    width: 700px;
     height: 320px;
+    display: flex;
 
     background: #F2C1D9;
     border-radius: 20px;
