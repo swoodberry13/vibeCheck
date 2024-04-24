@@ -23,6 +23,23 @@ body {
     border: 3px solid #F54375;
     border-radius: 70px;
   }
+  #topArtists{
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+    align-items: flex-start;
+    align-content: flex-start;
+    padding: 0px;
+    gap: 207px 33px;
+
+    position: absolute;
+    width: 1044px;
+    height: 531px;
+    left: 91px;
+    top: 522px;
+  }
+
+
 
   .artistBlurb h2{
 
