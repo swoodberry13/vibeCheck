@@ -144,13 +144,13 @@ body {
     font-style: italic;
   }
 
-  .footer {
+  /* .footer {
     background-color: #F54375;
     padding: 50px;
     position: absolute;
     bottom: 0;
     width: 100%;
-  }
+  } */
 
   h1{
     font-family: Verdana, Geneva, Tahoma, sans-serif;
