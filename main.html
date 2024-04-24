@@ -36,8 +36,10 @@
 </div>
 <div id='topArtists'></div>
 <script type="text/javascript">
-    userArtists=sessionStorage.getItem('userArtistsData');
+    userArtists=sessionStorage.getItem('userArtists');
     console.log(userArtists);
+    test=sessionStorage.getItem('artistData');
+    console.log(test[0].name);
 
     //if its not logged into spotify don't show concerts
     //if it is logged into spotify get rid of login

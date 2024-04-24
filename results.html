@@ -274,8 +274,11 @@
               await getMyArtists();
               dataArr=getArtistArray();
               //const jsonObject = JSON.stringify(dataArr);
-              sessionStorage.setItem('userArtistsData', myArtistsData);
-              sessionStorage.setItem('relatedArtistsData',dataArr[2]);
+              sessionStorage.setItem('userArtists', dataArr[0]);
+              sessionStorage.setItem('userArtistsIDs', dataArr[1])
+              sessionStorage.setItem('relatedArtists',dataArr[2]);
+              sessionStorage.setItem('relatedArtistsIDs',dataArr[3]);
+              sessionStorage.setItem('artistData',myArtistsData);
               window.location.href='main.html';
             }else{
               dataArr=sessionStorage.getItem('array');
