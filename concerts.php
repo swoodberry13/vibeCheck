@@ -1,3 +1,5 @@
+<!-- Displays events on page and also writes their data to hidden form fields -->
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -6,8 +8,10 @@
     <title>Concerts</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Bungee&family=Inter:wght@100..900&family=Lexend:wght@100..900&display=swap" rel="stylesheet">
     <style>
+        .event {
+            border: 1px solid #000000;
+        }
     </style>
 </head>
 <body>
@@ -16,93 +20,132 @@
         // Do an attraction search to get attractionId
         // Do an events search with attractionId
 
-        function attractionSearch(url) {
-            fetch(url)
-            .then (res => res.text())
-            .then (data =>
-            {
-                data = JSON.parse(data);
-                // If artist is found, proceed
-                if (data.page.totalElements > 0) {
-                    // Get attractionId
-                    id = data._embedded.attractions[0].id;
-                    eventSearchURL = `https://app.ticketmaster.com/discovery/v2/events.json?attractionId=${id}&apikey=1IiUV6YIvdbcA2xr6D9bBGrKOIao6VGb&size=1`;
-                    // Do event search
-                    const response = eventSearch(eventSearchURL); 
-                    
-                } else {
-                    console.log("No artist found");
-                }
-                
-            })
-            .catch (error => console.log(error))
-        }
+        // attractionSearch
+        // Searches for an attraction
+        // RETURNS: promise to a string that contains the attraction ID
+        // Note: doesn't check if the attraction ID is a direct match;
+        // ex. searching with 'Nirvana' would yield a different artist because
+        // Nirvana is not actually touring (R.I.P.)
+        async function attractionSearch(url, num) {
+            console.log("attraction search");
 
-        function eventSearch(url) {
-            fetch(eventSearchURL)
+            try {
+                const res = await fetch(url);
+                const data = await res.text();
+                parsedData = JSON.parse(data);
+
+                eventString = ``;
+                // Get attractionId
+                id = parsedData._embedded.attractions[0].id;
+                eventSearchURL = `https://app.ticketmaster.com/discovery/v2/events.json?attractionId=${id}&apikey=1IiUV6YIvdbcA2xr6D9bBGrKOIao6VGb&size=1`;
+                // Do event search to get html for each event
+                const htmlString = await eventSearch(eventSearchURL, num);
+                console.log("STRING: " + htmlString);
+                eventString += htmlString;
+                console.log("eventString " + eventString);
+                return eventString;
+
+            } catch (error) {
+                console.log(error);
+            }
+        }
+           
+        // eventSearch
+        // searches for an event given an attractionID
+        // RETURNS: string of HTML containing event data, plus event data written
+        // to a hidden form field
+        function eventSearch(url, num) {
+            
+            return fetch(eventSearchURL)
             .then (eventRes => eventRes.text())
             .then (eventData => 
                 {
                     eventData = JSON.parse(eventData);
-                    eventName = eventData._embedded.events[0].name; 
-                    artistName = eventData._embedded.events[0]._embedded.attractions[0].name;          
-                    venue = eventData._embedded.events[0]._embedded.venues[0].name; 
-                    date = eventData._embedded.events[0].dates.start.localDate; 
-                    localTime = eventData._embedded.events[0].dates.start.localTime; 
-                    city = eventData._embedded.events[0]._embedded.venues[0].city.name; 
-                    state = eventData._embedded.events[0]._embedded.venues[0].state.name; 
-                    country = eventData._embedded.events[0]._embedded.venues[0].country.name;  
-                    url = eventData._embedded.events[0].url; 
+                    events = eventData._embedded.events;
 
-                    // Fill hidden form fields with data
-                    document.forms["event"]["eventName"].value = eventName;
-                    document.forms["event"]["artistName"].value = artistName; 
-                    document.forms["event"]["venue"].value = venue; 
-                    document.forms["event"]["date"].value = date; 
-                    document.forms["event"]["localTime"].value = localTime; 
-                    document.forms["event"]["city"].value = city; 
-                    document.forms["event"]["state"].value = state; 
-                    document.forms["event"]["country"].value = country; 
-                    document.forms["event"]["url"].value = url; 
+                    htmlString = ``;
 
-                    // Auto submit form to pass data to PHP
-                    document.forms["event"].submit();
+                    // This is a little misleading, we actually are going to
+                    // only get one event, so the loop will only run once. 
+                    // But if we ever wanted to get multiple 
+                    // events we could use this loop.
+                    events.forEach((event, index) => {
+                        eventName = event.name; 
+                        artistName = event._embedded.attractions[0].name;          
+                        venue = event._embedded.venues[0].name; 
+                        date = event.dates.start.localDate; 
+                        localTime = event.dates.start.localTime; 
+                        city = event._embedded.venues[0].city.name; 
+                        state = event._embedded.venues[0].state.name; 
+                        country = event._embedded.venues[0].country.name;  
+                        url = event.url; 
+                        // HTML for each event
+                        htmlString += `<div class='event'><label for='checkbox'>Add to my list</label><input type='checkbox' name='addToList' id='addToList'><p>${eventName}</p><p>${artistName}</p><p>${venue}</p><p>${date}</p><p>${localTime}</p><p>${city}</p><p>${state}</p><p>${country}</p><p>${url}</p></div>`;
+                        // Put data into comma separated values string
+                        csvString = `${eventName},${artistName},${venue},${date},${localTime},${city},${state},${country},${url}`;
+                        inputName = "event" + num;
+                        // Put csv into hidden form field
+                        htmlString += `<input type='hidden' name='${inputName}' value='${csvString}'>`;
+                    })
+                    // Return HTML, including hidden form field
+                    return htmlString;
                 })
             .catch (error => console.log(error))
         }
 
-        async function fetchData() {
-            const artists = ["Pink Pantheress", "Psychedelic Porn Crumpets", "Adele", "Maggie Rogers", "Death Cab for Cutie"];
-            // const artists = ["Pink Pantheress", "asdfkjh", "Psychedelic Porn Crumpets", "Adele"];
-            // const artists = ["adele", "asdkfj"];
+        // fetchData
+        // given an artist array, performs an attraction search then an 
+        // event search and writes data to div on page
+        async function fetchData(artists) {
+            // String to build up HTML
+            let allEvents = `<form method='GET' action='process_events.php'>`;
+            // Ensures that the hidden form fields are named with a pattern, "event" + i
+            let i = 0;
             for (const artist of artists) {
-                // console.log("artist: " + artist)
                 attractionSearchURL = `https://app.ticketmaster.com/discovery/v2/attractions.json?keyword=${artist}&apikey=1IiUV6YIvdbcA2xr6D9bBGrKOIao6VGb&size=1`
-                // Do attraction search to get attractionId
-                attractionSearch(attractionSearchURL);
-
+                // Do attraction search to get attractionId  
+                try {              
+                    let eventString = await attractionSearch(attractionSearchURL, i);
+                    // If there was a problem, and eventString comes back
+                    // as undefined, then don't include it in allEvents
+                    if (eventString == undefined) {
+                        console.log("UNDEFINED");
+                        // Clear eventString
+                        eventString = ``;
+                    } 
+                    allEvents += eventString;               
+                } catch (error) {
+                    console.log(error);
+                }
                 // Delay to satisfy rate limit (max 5 requests per second)
                 await new Promise(resolve => setTimeout(resolve, 500));
+                // Increment i
+                i++;
             }
+            allEvents += `<input type='hidden' name='numEvents' value='${i}'>`;
+            allEvents += `<input type='submit' value='Submit'>`;
+            allEvents += `</form>`;
+            console.log(allEvents);
+    
+            // Set HTML
+            document.getElementById('mydiv').innerHTML = allEvents;
+
         }
 
+        // Hardcoded artist arrays for testing
+        // const artists = ["Pink Pantheress", "Psychedelic Porn Crumpets", "Adele", "Maggie Rogers", "Death Cab for Cutie"];
+        const artists = ["Pink Pantheress", "asdfkjh", "Psychedelic Porn Crumpets", "Adele"];
+        // const artists = ["adele", "asdkfj", "Pink Pantheress"];
+        // const artists = ["adele", "Pink Pantheress"];
+
         // Get data from Ticketmaster
-        fetchData();
+        console.log("NEW FETCH!!!!!!!!!");
+        fetchData(artists);
         
     </script>
     <?php
-        echo "<form id='eventForm' name='event' method='get' action='process_event.php'>";
-        echo "<input type='hidden' name='eventName'>";
-        echo "<input type='hidden' name='artistName'>";
-        echo "<input type='hidden' name='venue'>";
-        echo "<input type='hidden' name='date'>";
-        echo "<input type='hidden' name='localTime'>";
-        echo "<input type='hidden' name='city'>";
-        echo "<input type='hidden' name='state'>";
-        echo "<input type='hidden' name='country'>";
-        echo "<input type='hidden' name='url'>";
-        echo "</form>"
-
+        echo "<div id='mydiv'></div>"
     ?>
+
 </body>
 </html>
