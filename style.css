@@ -36,7 +36,7 @@ body {
     width: 1044px;
     height: 531px;
     left: 91px;
-    top: 522px;
+    top: 300px;
   }
 
 
@@ -153,6 +153,10 @@ body {
   } */
 
   h1{
+    font-family: Verdana, Geneva, Tahoma, sans-serif;
+    color:#092119;
+  }
+  h2{
     font-family: Verdana, Geneva, Tahoma, sans-serif;
     color:#092119;
   }
