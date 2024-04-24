@@ -197,19 +197,17 @@
               
               cur_related_artists=data.artists;//list of related artists
               //loop through list of related artists
-               for(let h=0; h<numRelated;h++){
+                for(let h=0; h<cur_related_artists.length;h++){
 
                   //if we haven't hit the max_number of related artists
-                 
+                 if(curNumRelated<=numRelated){
                  curID=cur_related_artists[h].id;
-                 curName=cur_related_artists[h].name;
                  //if the artist isn't already in the related list 
                  if(!(myArtistsIDs.includes(curID))&&!(relatedArtistsIDs.includes(curID))){
-
-                  newAdd=[{name : curName},{ID : curID},{genres : cur_related_artists[h].genres},{images : cur_related_artists[h].images}];
-                   relatedArtists.push(curName);
+                   curNumRelated++;
+                   relatedArtists.push(cur_related_artists[h].name);
                    relatedArtistsIDs.push(curID);
-                  
+                  }
                  }
 
                 }}
