@@ -6,6 +6,53 @@ body {
     margin: 0;
     font-family:Verdana, Geneva, Tahoma, sans-serif;
   }
+
+  .artistBlurb{
+    position: absolute;
+    width: 1050px;
+    height: 320px;
+
+    background: #F2C1D9;
+    border-radius: 20px;
+  }
+  .artistBlurb img{
+    position: absolute;
+    width: 280px;
+    height: 280px;
+
+    border: 3px solid #F54375;
+    border-radius: 70px;
+  }
+
+  .artistBlurb h2{
+
+    position: absolute;
+    width: 405px;
+    height: 85px;
+
+    font-family: Verdana, Geneva, Tahoma, sans-serif;
+    font-style: normal;
+    font-weight: 600;
+    font-size: 70px;
+    line-height: 85px;
+
+    color: #000000;
+  }
+  .artistBlurb .genres{
+    position: absolute;
+    width: 389px;
+    height: 44px;
+    font-family: Verdana, Geneva, Tahoma, sans-serif;
+    font-style: normal;
+    font-weight: 300;
+    font-size: 36px;
+    line-height: 44px;
+
+    color: #FFFFFF;
+
+
+  }
+
   .logo{
     padding-left: 10px;
   }

@@ -34,28 +34,46 @@
     <button id="loginButton">Login with Spotify</button>
   </center>
 </div>
-<div id='topArtists'></div>
+<div id='topArtists'>
+</div>
+
 <script type="text/javascript">
     userArtists=sessionStorage.getItem('userArtists');
     console.log(userArtists);
-    userArtists=userArtists.split(",");
+    
     console.log(userArtists);
-    test=sessionStorage.getItem('userArtistsPics');
-    test=test.split(",");
-    console.log(test);
+    pics=sessionStorage.getItem('userArtistsPics');
 
     //if its not logged into spotify don't show concerts
-    //if it is logged into spotify get rid of login
+
   if (userArtists==null) {
     document.getElementById("concerts").style.display="none";
     document.getElementById("loginBlurb").style.display="inline";
-    //document.getElementById("results").style.display="none";
-  }else{
+  }
+
+  //if it is logged into spotify
+  else{
+
     document.getElementById("loginBlurb").style.display="none";
-    notes=document.getElementsByClassName("musicNotesAnimation");
-    for(i=0;i<notes.length;i++){
-      notes[i].style.display="none";
+    notes=document.getElementsByClassName("musicNotesAnimation").style.display="none";
+    // for(i=0;i<notes.length;i++){
+    //   notes[i].style.display="none";
+    // }
+
+    userArtists=userArtists.split(",");
+    pics=pics.split(",");
+    console.log(pics);
+    console.log(userArtists);
+
+    stringCode="";
+    for (var i =0;i< 30;i++) {
+      stringCode+="<div class='artistBlurb'>";
+      stringCode+="<img src='"+pics[i]+"'>"
+      stringCode+="<h2>"+ userArtists[i]+"</h2>"
+
+      stringCode+="</div>";
     }
+     document.getElementById('topArtists').innerHTML=stringCode;
 
   }
 </script>
