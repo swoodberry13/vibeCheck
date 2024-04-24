@@ -123,7 +123,9 @@
 
                   newAdd=[{name : curName},{ID : curID},{genres : myData[q].genres},{images : myData[q].images}];
                   myArtistsData.push(newAdd);
-                  myArtistsPics.push(myData[q].images[0].url);
+                  if (!myData[q].images.length<1) {
+                    myArtistsPics.push(myData[q].images[0].url);
+                  }else{myArtistsPics.push('images/blankArtists.png')}
 
                   getRelatedArtists(curID, 3);//gets artists related to current artist
                   myArtists.push(curName);
