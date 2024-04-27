@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Nearby Events</title>
+  <style>
+    /* Add your CSS styles here */
+    #map {
+      height: 400px;
+      width: 100%;
+    }
+  </style>
+</head>
+<body>
+  <h1>Nearby Events</h1>
+  <div id="map"></div>
+  <div id="events"></div>
+
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.2/jquery.min.js"></script>
+  <script>
+    // Function to get user's location using HTML5 Geolocation
+    function getLocation() {
+      if (navigator.geolocation) {
+        navigator.geolocation.getCurrentPosition(showPosition, showError);
+      } else {
+        showError({ code: 0, message: "Geolocation is not supported by this browser." });
+      }
+    }
+
+    // Function to handle successful retrieval of user's location
+    function showPosition(position) {
+      var lat = position.coords.latitude;
+      var lon = position.coords.longitude;
+      var latlon = lat + "," + lon;
+
+      // API call to fetch events near the user's location
+      $.ajax({
+        type: "GET",
+        url: "https://app.ticketmaster.com/discovery/v2/events.json",
+        data: {
+          apikey: "NSQgfG3TncoB4QUzLeWV02Y0RX5Lo9s3", // Replace with Ticketmaster API key
+          latlong: latlon
+        },
+        async: true,
+        dataType: "json",
+        success: function(response) {
+          displayEvents(response);
+          initMap(lat, lon, response);
+        },
+        error: function(xhr, status, err) {
+          showError({ code: xhr.status, message: "Failed to fetch events." });
+        }
+      });
+    }
+
+    // Function to display events on the page
+    function displayEvents(response) {
+      var eventsContainer = $("#events");
+      eventsContainer.empty();
+      eventsContainer.append("<h2>Events Near You</h2>");
+      
+      var events = response._embedded.events;
+      if (events && events.length > 0) {
+        events.forEach(function(event) {
+          var eventLink = $("<a>").attr("href", event.url).attr("target", "_blank").text(event.name);
+          eventsContainer.append(eventLink).append("<br>");
+        });
+      } else {
+        eventsContainer.append("<p>No events found nearby.</p>");
+      }
+    }
+
+    // Function to handle errors
+    function showError(error) {
+      var errorMessage;
+      switch(error.code) {
+        case 0:
+          errorMessage = "Geolocation is not supported by this browser.";
+          break;
+        case 1:
+          errorMessage = "User denied the request for Geolocation.";
+          break;
+        case 2:
+          errorMessage = "Location information is unavailable.";
+          break;
+        case 3:
+          errorMessage = "The request to get user location timed out.";
+          break;
+        default:
+          errorMessage = "An unknown error occurred.";
+      }
+      $("#events").html("<p>Error: " + errorMessage + "</p>");
+    }
+
+    // Function to initialize Google Map and display user's location
+    function initMap(lat, lon, response) {
+      var map = new google.maps.Map(document.getElementById("map"), {
+        center: { lat: lat, lng: lon },
+        zoom: 10
+      });
+
+      var userLocationMarker = new google.maps.Marker({
+        position: { lat: lat, lng: lon },
+        map: map,
+        title: "Your Location"
+      });
+
+      var events = response._embedded.events;
+      if (events && events.length > 0) {
+        events.forEach(function(event) {
+          var eventMarker = new google.maps.Marker({
+            position: {
+              lat: event._embedded.venues[0].location.latitude,
+              lng: event._embedded.venues[0].location.longitude
+            },
+            map: map,
+            title: event.name
+          });
+        });
+      }
+    }
+
+    // Trigger getLocation function when the page loads
+    getLocation();
+  </script>
+  // added by google api key
+  <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyCUbwdxaE7XL0VmYBsOrE7I4Wu0sX7Ble0&callback=initMap" async defer></script>
+</body>
+</html>
